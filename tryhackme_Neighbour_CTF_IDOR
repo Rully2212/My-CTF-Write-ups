@@ -1,0 +1,35 @@
+# TryHackMe: Neighbour CTF - IDOR Writeup
+**Penulis:** Rully Miftahur Rozaq
+
+## Deskripsi
+Laporan ini mendokumentasikan langkah-langkah penyelesaian tantangan **Neighbour** di TryHackMe. Fokus utama dari CTF ini adalah mengeksploitasi kerentanan **IDOR (Insecure Direct Object Reference)** , di mana pengguna dapat memanipulasi parameter ID untuk mengakses data milik pengguna lain.
+
+---
+
+## Langkah-Langkah Eksploitasi
+
+### 1. Persiapan dan Akses Target
+* Mengaktifkan mesin di TryHackMe untuk mendapatkan alamat IP target.
+* Mengakses IP yang tersedia melalui browser[cite: 5]. [cite_start]Dalam kasus ini, IP target adalah `10.48.173.31` [cite: 5][cite_start], yang menampilkan sebuah form login[cite: 6].
+
+### 2. Mendapatkan Kredensial Guest
+* [cite_start]Karena tidak memiliki akun terdaftar, pengecekan dilakukan pada *source code* halaman dengan menekan **CTRL + U** di keyboard[cite: 7].
+* [cite_start]Dari *source code* tersebut, ditemukan petunjuk untuk menggunakan akun *guest*[cite: 7].
+* [cite_start]Login berhasil dilakukan menggunakan kredensial berikut[cite: 8]:
+  * [cite_start]**Username:** `guest` [cite: 8]
+  * [cite_start]**Password:** `guest` [cite: 8]
+
+### 3. Eksploitasi IDOR
+* [cite_start]Setelah berhasil login[cite: 9, 10], halaman profil menampilkan pesan peringatan: *"Try not to peep your neighbor's profile."*
+* Eksploitasi IDOR dilakukan dengan memperhatikan parameter pada URL.
+* [cite_start]Parameter ID user pada URL dimanipulasi dengan mengganti nilainya dari `guest` menjadi `admin` di kolom pencarian/URL[cite: 11].
+  * **URL Awal:** `.../profile.php?user=guest`
+  * [cite_start]**URL Modifikasi:** `.../profile.php?user=admin` [cite: 11]
+
+---
+
+## Hasil Akhir
+[cite_start]Manipulasi parameter ID berhasil mem-bypass kontrol akses[cite: 12]. [cite_start]Sistem mengarahkan ke halaman profil user admin dan flag berhasil didapatkan[cite: 12].
+
+**Flag:**
+> `flag{66be95c478473d91a5358f2440c7af1f}`
