@@ -51,3 +51,7 @@ Tanggal: 10 Oktober 2026. Repo utama: [My-CTF-Write-ups](https://github.com/Rull
 ## Cakupan
 
 Repo laporan bug bounty, advisory CVE, tugas kuliah, proyek web, dan `Cybersecurity-Lab` berada di luar cakupan penggabungan CTF. Repo `overthewire_bandit_1-10` adalah duplikat kosong yang sudah diarsipkan sebelum migrasi dan tidak memiliki konten untuk diimpor.
+
+## Repo Lama
+
+Seluruh 18 repo sumber telah diarsipkan setelah commit gabungan terverifikasi di GitHub. README setiap repo asal memuat tautan ke lokasi write-up yang baru, dan homepage serta deskripsinya menunjuk repo utama. Repo asal tetap tersedia untuk menjaga URL lama dan riwayatnya.
