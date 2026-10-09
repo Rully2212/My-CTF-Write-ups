@@ -216,3 +216,25 @@ The exercise illustrates how an exposed legacy web service can lead to service-a
 - A success message and access to an administrator-owned file support the escalation result, while an identity check is still needed to name the final security principal with certainty.
 
 The supplied evidence confirms the two flag objectives. Remaining gaps are the final outcome of the MS16-016 attempt, the exact identity of session 2, complete network and patch coverage, and cleanup status.
+
+## 10. Screenshot Evidence Index
+
+The image IDs follow the order supplied. Capture times below come from the original filenames, all dated 7 September 2026. The accompanying PNG files are unchanged copies of the originals. The accompanying `evidence/SHA256SUMS.txt` records their checksums.
+
+| ID | Capture time | Evidence description |
+| --- | --- | --- |
+| [S01](evidence/S01.png) | 00:34:53 | Nmap results: IIS 6.0, HTTP port 80, WebDAV methods, and filtered ports |
+| [S02](evidence/S02.png) | 00:35:22 | Gobuster results and successful DAVTest connection |
+| [S03](evidence/S03.png) | 00:35:31 | DAVTest upload results, content checks, and summary |
+| [S04](evidence/S04.png) | 00:35:39 | Metasploit startup and investigation of CVE-2017-7269 |
+| [S05](evidence/S05.png) | 00:35:53 | IIS WebDAV module selection and configuration view |
+| [S06](evidence/S06.png) | 00:36:05 | Initial-access configuration and recorded launch |
+| [S07](evidence/S07.png) | 00:36:20 | Session 1 opening, identity-check error, and local assessment output |
+| [S08](evidence/S08.png) | 00:36:30 | Local assessment results and validation caveats |
+| [S09](evidence/S09.png) | 00:36:41 | Active session and process enumeration |
+| [S10](evidence/S10.png) | 00:36:54 | Process listing, Windows shell, hostname, and OS information |
+| [S11](evidence/S11.png) | 00:37:05 | System details, NETWORK SERVICE identity, and successful migration |
+| [S12](evidence/S12.png) | 00:37:16 | MS16-016 attempt with no visible final outcome |
+| [S13](evidence/S13.png) | 00:37:32 | MS14-070 attempt with reported success |
+| [S14](evidence/S14.png) | 00:37:44 | Session 2 opening and filesystem navigation |
+| [S15](evidence/S15.png) | 00:38:06 | Both flag locations and contents |
