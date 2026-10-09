@@ -223,4 +223,19 @@ The supplied screenshot does not show `root.txt` being read. Therefore, this rep
 The assessment demonstrated a successful path from service enumeration to SYSTEM-level access. It reinforced the value of validating a suspected vulnerability before exploitation, checking the session's privileges immediately after access, and using accurate filesystem paths during flag discovery.
 
 The documented outcome is SYSTEM access, successful user flag retrieval, and discovery of the root flag file.
+
+## Repository Contents
+
+```text
+hackthebox/blue/
+├── README.md
+└── screenshots/
+    ├── 01-nmap-enumeration.png
+    ├── 02-netexec-smb-enumeration.png
+    ├── 03-metasploit-module-selection.png
+    ├── 04-eternalblue-exploitation.png
+    ├── 05-system-privilege-verification.png
+    └── 06-flag-discovery.png
+```
+
 All screenshots are the original supplied images. Image links use relative paths so that they render on GitHub when `README.md` and the `screenshots` folder are uploaded together.
