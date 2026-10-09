@@ -1,12 +1,12 @@
 # CTF Write-ups
 
-Kumpulan write-up Capture The Flag dan latihan keamanan oleh **Rully Miftahur Rozaq**, disusun berdasarkan platform dan nama mesin. Setiap write-up berisi langkah pengerjaan, hasil pengamatan, dan bukti yang tersedia dari sesi lab.
+A collection of Capture The Flag write-ups and security training notes by **Rully Miftahur Rozaq**, organized by platform and machine. Each write-up documents the approach, observations, and available evidence from the lab session.
 
-**23 write-up:** 17 Hack The Box · 5 TryHackMe · 1 OverTheWire.
+**23 write-ups:** 17 Hack The Box · 5 TryHackMe · 1 OverTheWire.
 
 ## Hack The Box
 
-| Write-up | Fokus |
+| Write-up | Focus |
 | --- | --- |
 | [Arctic](hackthebox/arctic/README.md) | ColdFusion, Windows privilege escalation |
 | [Bank](hackthebox/bank/README.md) | Exposed account data, file upload, SUID |
@@ -28,7 +28,7 @@ Kumpulan write-up Capture The Flag dan latihan keamanan oleh **Rully Miftahur Ro
 
 ## TryHackMe
 
-| Write-up | Fokus |
+| Write-up | Focus |
 | --- | --- |
 | [Basic Pentesting](tryhackme/basic-pentesting/README.md) | Enumeration and access |
 | [Neighbour](tryhackme/neighbour/README.md) | IDOR |
@@ -38,26 +38,26 @@ Kumpulan write-up Capture The Flag dan latihan keamanan oleh **Rully Miftahur Ro
 
 ## OverTheWire
 
-| Write-up | Fokus |
+| Write-up | Focus |
 | --- | --- |
 | [Bandit — Levels 1–10](overthewire/bandit/levels-01-10/README.md) | Linux command line and file inspection |
 
-## Struktur repo
+## Repository Structure
 
 ```text
-hackthebox/<mesin>/README.md
+hackthebox/<machine>/README.md
 tryhackme/<room>/README.md
 overthewire/bandit/levels-01-10/README.md
 docs/MIGRATION.md
 templates/WRITEUP.md
 ```
 
-Gambar disimpan di folder `images/`, `assets/`, `screenshots/`, atau `evidence/` di sebelah write-up terkait. Sepuluh gambar yang dirujuk laporan Reactor belum tersedia dalam repo asal; penandanya dicatat di laporan tersebut.
+Images are stored in an `images/`, `assets/`, `screenshots/`, or `evidence/` folder alongside the corresponding write-up. Ten images referenced in the Reactor report were missing from the source repository; their descriptions and filenames are recorded in that report.
 
-## Menambah write-up
+## Adding a Write-up
 
-Gunakan [template write-up](templates/WRITEUP.md) dan ikuti [panduan kontribusi](CONTRIBUTING.md).
+Use the [write-up template](templates/WRITEUP.md) and follow the [contribution guide](CONTRIBUTING.md).
 
-## Riwayat penggabungan
+## Consolidation History
 
-Repo ini menjadi tempat utama untuk seluruh write-up CTF. Pemetaan repo asal, commit sumber, dan perubahan lokasi berkas tersedia di [catatan migrasi](docs/MIGRATION.md).
+This repository is the central home for all CTF write-ups. Source repository mappings, original commits, and file moves are documented in the [migration notes](docs/MIGRATION.md).

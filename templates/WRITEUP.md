@@ -1,28 +1,28 @@
-# Nama Mesin / Challenge
+# Machine / Challenge Name
 
-| Informasi | Detail |
+| Information | Details |
 | --- | --- |
 | Platform | Hack The Box / TryHackMe / OverTheWire |
-| Mesin / Room | Nama challenge |
-| Penulis | Rully Miftahur Rozaq |
-| Tanggal selesai | YYYY-MM-DD |
+| Machine / Room | Challenge name |
+| Author | Rully Miftahur Rozaq |
+| Completion date | YYYY-MM-DD |
 
-## Ringkasan
+## Summary
 
-Jelaskan tujuan challenge dan hasil yang dicapai.
+Describe the challenge objective and the outcome.
 
-## Enumerasi
+## Enumeration
 
-Catat layanan, tools, perintah, dan temuan awal.
+Record the services, tools, commands, and initial findings.
 
-## Penyelesaian
+## Walkthrough
 
-Jelaskan langkah pengerjaan secara berurutan beserta hasilnya.
+Explain the steps in order, including their results.
 
-## Verifikasi Hasil
+## Result Verification
 
-Catat bukti hasil akhir dari sesi lab.
+Record the evidence supporting the final outcome of the lab session.
 
-## Pelajaran
+## Lessons Learned
 
-Jelaskan temuan utama dan hal yang dipelajari.
+Describe the main findings and what you learned.

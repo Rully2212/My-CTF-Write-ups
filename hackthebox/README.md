@@ -1,8 +1,8 @@
 # Hack The Box
 
-17 write-up mesin Hack The Box.
+17 Hack The Box machine write-ups.
 
-| Write-up | Fokus |
+| Write-up | Focus |
 | --- | --- |
 | [Arctic](arctic/README.md) | ColdFusion, Windows privilege escalation |
 | [Bank](bank/README.md) | Exposed account data, file upload, SUID |
@@ -22,4 +22,4 @@
 | [Unified](unified/README.md) | UniFi, Log4j, MongoDB |
 | [Valentine](valentine/README.md) | Heartbleed, SSH, tmux |
 
-[Kembali ke daftar utama](../README.md).
+[Back to the main index](../README.md).

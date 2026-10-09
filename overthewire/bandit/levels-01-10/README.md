@@ -1,54 +1,54 @@
-# Writeup Belajar Command Linux untuk OverTheWire Bandit
+# Learning Linux Commands with OverTheWire Bandit
 
-Writeup ini berisi rangkuman command yang sudah dipelajari saat mengerjakan level awal OverTheWire Bandit. Fokusnya bukan menghafal jawaban, tetapi memahami cara kerja command Linux yang dipakai untuk mencari dan membaca file.
+This write-up summarizes the commands learned while working through the early OverTheWire Bandit levels. The goal is to understand how Linux commands find and read files, rather than memorize answers.
 
-> Catatan: Jangan masukkan password atau flag asli ke writeup publik seperti GitHub. Cukup tulis command, penjelasan, dan placeholder seperti `<PASSWORD_BANDIT11>`.
+> Note: Do not include actual passwords or flags in public write-ups on GitHub. Use commands, explanations, and placeholders such as `<PASSWORD_BANDIT11>`.
 
 ---
 
-## 1. Membaca file bernama `-`
+## 1. Reading a File Named `-`
 
-Jika ada file dengan nama:
+If a file is named:
 
 ```bash
 -
 ```
 
-Jangan langsung memakai:
+Do not simply run:
 
 ```bash
 cat -
 ```
 
-Karena `cat -` akan dianggap membaca dari input keyboard atau `stdin`, bukan membaca file bernama `-`.
+`cat -` reads from keyboard input or `stdin` instead of opening a file named `-`.
 
-Command yang benar:
+Correct command:
 
 ```bash
 cat ./-
 ```
 
-Alternatif:
+Alternative:
 
 ```bash
 cat -- -
 ```
 
-Penjelasan:
+Explanation:
 
 ```bash
 ./-
 ```
 
-artinya file bernama `-` yang berada di direktori saat ini.
+refers to a file named `-` in the current directory.
 
 ```bash
 --
 ```
 
-artinya stop membaca opsi. Jadi karakter `-` setelahnya dianggap sebagai nama file.
+marks the end of command options, so the following `-` is treated as a filename.
 
-Jika terminal sudah terlanjur menunggu input karena menjalankan `cat -`, tekan:
+If the terminal is already waiting for input after running `cat -`, press:
 
 ```bash
 CTRL + D
@@ -56,94 +56,94 @@ CTRL + D
 
 ---
 
-## 2. Membaca file yang namanya mengandung spasi dan diawali `--`
+## 2. Reading a Filename with Spaces That Starts with `--`
 
-Contoh nama file:
+Example filename:
 
 ```bash
 --spaces in this filename--
 ```
 
-Masalahnya ada dua:
+There are two issues:
 
-1. Ada spasi, sehingga harus diberi tanda kutip.
-2. Diawali `--`, sehingga bisa dianggap sebagai opsi command.
+1. The filename contains spaces, so it must be quoted.
+2. It starts with `--`, so it may be interpreted as a command option.
 
-Command yang benar:
+Correct command:
 
 ```bash
 cat "./--spaces in this filename--"
 ```
 
-Alternatif:
+Alternative:
 
 ```bash
 cat -- "--spaces in this filename--"
 ```
 
-Penjelasan:
+Explanation:
 
 ```bash
-"nama file"
+"file name"
 ```
 
-membuat shell membaca nama file sebagai satu argumen, meskipun ada spasi.
+makes the shell treat the filename as one argument, even when it contains spaces.
 
 ```bash
 ./
 ```
 
-menunjukkan bahwa file tersebut berada di direktori saat ini, sehingga tidak dianggap sebagai opsi command.
+specifies that the file is in the current directory and prevents its name from being interpreted as a command option.
 
 ---
 
-## 3. Membaca hidden file yang diawali titik
+## 3. Reading Hidden Files That Start with a Dot
 
-File yang diawali titik `.` di Linux adalah hidden file.
+On Linux, files whose names start with a dot `.` are hidden files.
 
-Contoh nama file:
+Example filename:
 
 ```bash
 ...Hiding-From-You
 ```
 
-Untuk melihat hidden file, gunakan:
+To list hidden files, use:
 
 ```bash
 ls -la
 ```
 
-Untuk membaca file tersebut:
+To read the file:
 
 ```bash
 cat ./...Hiding-From-You
 ```
 
-Penjelasan penting:
+Key details:
 
 ```bash
 .
 ```
 
-artinya direktori saat ini.
+means the current directory.
 
 ```bash
 ..
 ```
 
-artinya direktori parent atau direktori sebelumnya.
+means the parent directory.
 
 ```bash
 ...
 ```
 
-bukan perintah khusus. Jika ada file bernama `...Hiding-From-You`, maka tiga titik itu hanya bagian dari nama file.
+has no special command meaning here. In a filename such as `...Hiding-From-You`, the three dots are simply part of the name.
 
 ---
 
-## 4. Mencari file dengan `find` berdasarkan ukuran dan permission
+## 4. Finding Files by Size and Permissions with `find`
 
-Jika ada banyak folder seperti:
+If there are many directories such as:
 
 ```bash
 maybehere00
@@ -153,9 +153,9 @@ maybehere02
 maybehere19
 ```
 
-jangan dicek satu per satu. Gunakan `find`.
+use `find` instead of checking each directory individually.
 
-Contoh clue: file berukuran `1033 bytes`, human-readable, dan not executable.
+Example clue: the file is `1033 bytes`, human-readable, and not executable.
 
 Command:
 
@@ -163,51 +163,51 @@ Command:
 find . -type f -size 1033c ! -executable -readable
 ```
 
-Penjelasan:
+Explanation:
 
 ```bash
 .
 ```
 
-mencari mulai dari direktori saat ini.
+starts the search in the current directory.
 
 ```bash
 -type f
 ```
 
-hanya mencari file, bukan folder.
+matches files rather than directories.
 
 ```bash
 -size 1033c
 ```
 
-mencari file dengan ukuran tepat 1033 bytes. Huruf `c` berarti bytes.
+matches files exactly 1033 bytes long. The suffix `c` means bytes.
 
 ```bash
 ! -executable
 ```
 
-mencari file yang tidak executable.
+matches files that are not executable.
 
 ```bash
 -readable
 ```
 
-mencari file yang bisa dibaca.
+matches readable files.
 
-Setelah menemukan path file, baca isinya:
+After finding the file path, read its contents:
 
 ```bash
-cat ./path/hasil-find
+cat ./path/find-result
 ```
 
-Contoh:
+Example:
 
 ```bash
 cat ./maybehere07/.file2
 ```
 
-Jika ingin langsung membaca hasilnya:
+To read the matching files directly:
 
 ```bash
 find . -type f -size 1033c ! -executable -readable -exec cat {} \;
@@ -215,63 +215,63 @@ find . -type f -size 1033c ! -executable -readable -exec cat {} \;
 
 ---
 
-## 5. Mencari file di seluruh server
+## 5. Searching the Entire Server
 
-Kadang clue mengatakan file ada di "somewhere on the server". Artinya pencarian tidak cukup dari direktori saat ini saja.
+A clue may say that the file is "somewhere on the server." In that case, searching only the current directory is not sufficient.
 
-Jika memakai:
+If you use:
 
 ```bash
 find . -type f -user bandit7 -group bandit6 -size 33c
 ```
 
-maka pencarian hanya dilakukan dari direktori saat ini.
+the search starts only from the current directory.
 
-Untuk mencari dari seluruh sistem, gunakan `/`:
+To search the entire system, start from `/`:
 
 ```bash
 find / -type f -user bandit7 -group bandit6 -size 33c 2>/dev/null
 ```
 
-Penjelasan:
+Explanation:
 
 ```bash
 /
 ```
 
-mencari dari root directory atau seluruh sistem.
+starts at the root directory and searches the system.
 
 ```bash
 -user bandit7
 ```
 
-mencari file yang dimiliki user `bandit7`.
+matches files owned by the user `bandit7`.
 
 ```bash
 -group bandit6
 ```
 
-mencari file yang dimiliki group `bandit6`.
+matches files belonging to the group `bandit6`.
 
 ```bash
 -size 33c
 ```
 
-mencari file dengan ukuran 33 bytes.
+matches files that are 33 bytes long.
 
 ```bash
 2>/dev/null
 ```
 
-menyembunyikan error seperti `Permission denied`.
+hides errors such as `Permission denied`.
 
-Setelah path ditemukan, baca file-nya:
+After finding the path, read the file:
 
 ```bash
-cat /path/file-yang-muncul
+cat /path/found-file
 ```
 
-Atau langsung:
+Or read it directly:
 
 ```bash
 find / -type f -user bandit7 -group bandit6 -size 33c 2>/dev/null -exec cat {} \;
@@ -279,105 +279,105 @@ find / -type f -user bandit7 -group bandit6 -size 33c 2>/dev/null -exec cat {} \
 
 ---
 
-## 6. Kumpulan command `find` yang sering dipakai
+## 6. Common `find` Commands
 
-Mencari semua file:
+Find all files:
 
 ```bash
 find . -type f
 ```
 
-Mencari semua folder:
+Find all directories:
 
 ```bash
 find . -type d
 ```
 
-Mencari file berdasarkan nama:
+Find files by name:
 
 ```bash
 find . -name "file.txt"
 ```
 
-Mencari file hidden:
+Find hidden files:
 
 ```bash
 find . -name ".*"
 ```
 
-Mencari file berdasarkan ukuran tertentu:
+Find files of a specific size:
 
 ```bash
 find . -type f -size 1033c
 ```
 
-Mencari file lebih besar dari 1 MB:
+Find files larger than 1 MB:
 
 ```bash
 find . -type f -size +1M
 ```
 
-Mencari file lebih kecil dari 1 KB:
+Find files smaller than 1 KB:
 
 ```bash
 find . -type f -size -1k
 ```
 
-Mencari file yang bisa dibaca:
+Find readable files:
 
 ```bash
 find . -type f -readable
 ```
 
-Mencari file yang executable:
+Find executable files:
 
 ```bash
 find . -type f -executable
 ```
 
-Mencari file yang tidak executable:
+Find files that are not executable:
 
 ```bash
 find . -type f ! -executable
 ```
 
-Mencari file milik user tertentu:
+Find files owned by a specific user:
 
 ```bash
 find . -type f -user bandit5
 ```
 
-Mencari file milik group tertentu:
+Find files belonging to a specific group:
 
 ```bash
 find . -type f -group bandit5
 ```
 
-Mencari file berdasarkan permission:
+Find files by permissions:
 
 ```bash
 find . -type f -perm 644
 ```
 
-Mencari file yang punya permission executable:
+Find files with at least one execute permission bit set:
 
 ```bash
 find . -type f -perm /111
 ```
 
-Mencari file kosong:
+Find empty files:
 
 ```bash
 find . -type f -empty
 ```
 
-Mencari folder kosong:
+Find empty directories:
 
 ```bash
 find . -type d -empty
 ```
 
-Menjalankan command ke hasil `find`:
+Run a command on the files returned by `find`:
 
 ```bash
 find . -type f -name "*.txt" -exec cat {} \;
@@ -385,69 +385,69 @@ find . -type f -name "*.txt" -exec cat {} \;
 
 ---
 
-## 7. Perbedaan `grep`, `cat`, `wget`, `curl`, dan `scp`
+## 7. Differences Between `grep`, `cat`, `wget`, `curl`, and `scp`
 
-`grep` bukan untuk download file. `grep` digunakan untuk mencari teks di dalam file atau output command.
+`grep` searches text in files or command output; it does not download files.
 
-Contoh:
+Example:
 
 ```bash
 grep "millionth" data.txt
 ```
 
-Artinya mencari baris yang mengandung kata `millionth` di file `data.txt`.
+This finds lines containing the word `millionth` in `data.txt`.
 
-Untuk membaca file:
+To read a file:
 
 ```bash
 cat data.txt
 ```
 
-Untuk download file dari URL:
+To download a file from a URL:
 
 ```bash
 wget http://example.com/file.txt
 ```
 
-atau:
+or:
 
 ```bash
 curl -O http://example.com/file.txt
 ```
 
-Untuk download file dari server SSH ke komputer lokal:
+To download a file from an SSH server to the local computer:
 
 ```bash
 scp -P 2220 bandit6@bandit.labs.overthewire.org:/path/file .
 ```
 
-Penjelasan:
+Explanation:
 
 ```bash
 -P 2220
 ```
 
-menggunakan port SSH 2220.
+uses SSH port 2220.
 
 ```bash
 :/path/file
 ```
 
-lokasi file di server.
+specifies the file location on the server.
 
 ```bash
 .
 ```
 
-simpan file di direktori lokal saat ini.
+saves the file in the current local directory.
 
-Namun untuk Bandit, biasanya tidak perlu download file. Cukup baca atau proses file langsung di server.
+For Bandit, downloading files is usually unnecessary. Read or process them directly on the server.
 
 ---
 
-## 8. Mencari baris yang muncul satu kali
+## 8. Finding Lines That Appear Once
 
-Jika ingin mencari baris yang hanya muncul sekali di sebuah file, gunakan kombinasi `sort` dan `uniq`.
+To find lines that appear only once in a file, combine `sort` and `uniq`.
 
 Command:
 
@@ -455,33 +455,33 @@ Command:
 sort data.txt | uniq -u
 ```
 
-Penjelasan:
+Explanation:
 
 ```bash
 sort data.txt
 ```
 
-mengurutkan isi file supaya baris yang sama berdekatan.
+sorts the file contents so identical lines are adjacent.
 
 ```bash
 uniq -u
 ```
 
-menampilkan baris yang unik, yaitu baris yang hanya muncul satu kali.
+prints lines that occur only once.
 
-Jika ingin melihat jumlah kemunculan setiap baris:
+To count the occurrences of each line:
 
 ```bash
 sort data.txt | uniq -c
 ```
 
-Jika ingin menampilkan baris yang jumlah kemunculannya 1:
+To show lines whose occurrence count is 1:
 
 ```bash
 sort data.txt | uniq -c | grep " 1 "
 ```
 
-Command paling ringkas untuk Bandit level ini:
+The shortest command for this Bandit level is:
 
 ```bash
 sort data.txt | uniq -u
@@ -489,37 +489,37 @@ sort data.txt | uniq -u
 
 ---
 
-## 9. Mencari string yang bisa dibaca manusia
+## 9. Finding Human-Readable Strings
 
-Untuk mencari teks yang bisa dibaca manusia dari file binary, gunakan `strings`.
+Use `strings` to extract human-readable text from a binary file.
 
-Command dasar:
+Basic command:
 
 ```bash
 strings data.txt
 ```
 
-Jika output terlalu banyak, gabungkan dengan `grep`.
+If there is too much output, filter it with `grep`.
 
-Contoh mencari baris yang mengandung tanda `=`:
+For example, find lines containing `=`:
 
 ```bash
 strings data.txt | grep "="
 ```
 
-Mencari kata tertentu:
+Find a specific word:
 
 ```bash
 strings data.txt | grep "password"
 ```
 
-Mengabaikan huruf besar atau kecil:
+Ignore letter case:
 
 ```bash
 strings data.txt | grep -i "password"
 ```
 
-Alur yang sering dipakai:
+A common workflow:
 
 ```bash
 file data.txt
@@ -527,59 +527,59 @@ strings data.txt
 strings data.txt | grep "="
 ```
 
-Penjelasan:
+Explanation:
 
 ```bash
 file data.txt
 ```
 
-melihat jenis file.
+identifies the file type.
 
 ```bash
 strings data.txt
 ```
 
-mengambil teks yang bisa dibaca dari file binary.
+extracts readable text from a binary file.
 
 ```bash
 grep "="
 ```
 
-menyaring output yang mengandung tanda `=`.
+filters for output containing `=`.
 
 ---
 
-## 10. Decode Base64
+## 10. Decoding Base64
 
-Jika file sudah berisi teks base64, jangan di-encode lagi.
+If a file already contains Base64-encoded text, do not encode it again.
 
-Command yang salah:
+Incorrect command:
 
 ```bash
 base64 data.txt
 ```
 
-Command di atas akan melakukan encode lagi.
+The command above encodes the content again.
 
-Untuk decode base64, gunakan:
+To decode Base64, use:
 
 ```bash
 base64 -d data.txt
 ```
 
-atau:
+or:
 
 ```bash
 base64 --decode data.txt
 ```
 
-Setelah mendapatkan password, login ke level berikutnya:
+After obtaining the password, log in to the next level:
 
 ```bash
 ssh bandit11@bandit.labs.overthewire.org -p 2220
 ```
 
-Alur lengkap:
+Complete workflow:
 
 ```bash
 ls
@@ -590,44 +590,44 @@ ssh bandit11@bandit.labs.overthewire.org -p 2220
 
 ---
 
-## 11. Decode ROT13 menggunakan `tr`
+## 11. Decoding ROT13 with `tr`
 
-ROT13 adalah teknik mengganti huruf dengan huruf lain yang posisinya bergeser 13 langkah.
+ROT13 replaces each letter with the letter 13 positions later in the alphabet, wrapping around at the end.
 
-Command untuk ROT13:
+ROT13 command:
 
 ```bash
 cat data.txt | tr 'A-Za-z' 'N-ZA-Mn-za-m'
 ```
 
-Alternatif tanpa `cat`:
+Alternative without `cat`:
 
 ```bash
 tr 'A-Za-z' 'N-ZA-Mn-za-m' < data.txt
 ```
 
-Penjelasan:
+Explanation:
 
 ```bash
 A-Za-z
 ```
 
-berarti semua huruf besar `A-Z` dan semua huruf kecil `a-z`.
+represents all uppercase letters `A-Z` and lowercase letters `a-z`.
 
 ```bash
 N-ZA-Mn-za-m
 ```
 
-berarti alfabet yang sudah diputar 13 posisi.
+represents the alphabet rotated by 13 positions.
 
-Peta ROT13 huruf besar:
+Uppercase ROT13 mapping:
 
 ```text
 ABCDEFGHIJKLMNOPQRSTUVWXYZ
 NOPQRSTUVWXYZABCDEFGHIJKLM
 ```
 
-Artinya:
+This means:
 
 ```text
 A -> N
@@ -650,57 +650,57 @@ P -> C
 Z -> M
 ```
 
-Bagian:
+The sequence:
 
 ```bash
 N-ZA-M
 ```
 
-adalah cara singkat menulis:
+is shorthand for:
 
 ```text
 NOPQRSTUVWXYZABCDEFGHIJKLM
 ```
 
-Karena:
+Because:
 
 ```bash
 N-Z
 ```
 
-berarti huruf `N` sampai `Z`.
+means the letters `N` through `Z`.
 
 ```bash
 A-M
 ```
 
-berarti huruf `A` sampai `M`.
+means the letters `A` through `M`.
 
-Jadi:
+Therefore:
 
 ```bash
 N-ZA-M
 ```
 
-sama dengan:
+is equivalent to:
 
 ```text
 NOPQRSTUVWXYZABCDEFGHIJKLM
 ```
 
-Untuk huruf kecil:
+For lowercase letters:
 
 ```bash
 n-za-m
 ```
 
-sama dengan:
+is equivalent to:
 
 ```text
 nopqrstuvwxyzabcdefghijklm
 ```
 
-Contoh:
+Example:
 
 ```bash
 echo "hello" | tr 'A-Za-z' 'N-ZA-Mn-za-m'
@@ -712,7 +712,7 @@ Output:
 uryyb
 ```
 
-Jika dijalankan lagi:
+If applied again:
 
 ```bash
 echo "uryyb" | tr 'A-Za-z' 'N-ZA-Mn-za-m'
@@ -724,21 +724,21 @@ Output:
 hello
 ```
 
-ROT13 unik karena encode dan decode menggunakan command yang sama.
+ROT13 uses the same command for encoding and decoding.
 
 ---
 
-## 12. Apa itu `tr`?
+## 12. What Is `tr`?
 
-`tr` adalah command Linux untuk translate karakter. Fungsinya bisa untuk mengganti, menghapus, atau memadatkan karakter dari input teks.
+`tr` is a Linux command for translating characters. It can replace, delete, or squeeze repeated characters in text input.
 
-Format dasar:
+Basic syntax:
 
 ```bash
-tr 'karakter_asal' 'karakter_pengganti'
+tr 'source_characters' 'replacement_characters'
 ```
 
-Contoh mengganti huruf:
+Example of replacing letters:
 
 ```bash
 echo "abc" | tr 'abc' '123'
@@ -750,7 +750,7 @@ Output:
 123
 ```
 
-Artinya:
+This means:
 
 ```text
 a -> 1
@@ -758,7 +758,7 @@ b -> 2
 c -> 3
 ```
 
-Mengubah huruf kecil menjadi huruf besar:
+Convert lowercase letters to uppercase:
 
 ```bash
 echo "hello" | tr 'a-z' 'A-Z'
@@ -770,7 +770,7 @@ Output:
 HELLO
 ```
 
-Menghapus spasi:
+Delete spaces:
 
 ```bash
 echo "h e l l o" | tr -d ' '
@@ -782,7 +782,7 @@ Output:
 hello
 ```
 
-Menghapus angka:
+Delete digits:
 
 ```bash
 echo "abc123" | tr -d '0-9'
@@ -796,9 +796,9 @@ abc
 
 ---
 
-## 13. Error umum pada `tr`
+## 13. A Common `tr` Error
 
-Contoh command yang salah:
+Example of an incorrect command:
 
 ```bash
 cat data.txt | tr 'A-Za-z'
@@ -811,13 +811,13 @@ tr: missing operand after 'A-Za-z'
 Two strings must be given when translating.
 ```
 
-Penyebabnya adalah `tr` membutuhkan dua string:
+This happens because character translation with `tr` requires two strings:
 
 ```bash
-tr 'karakter_asal' 'karakter_tujuan'
+tr 'source_characters' 'destination_characters'
 ```
 
-Command yang benar untuk ROT13:
+Correct ROT13 command:
 
 ```bash
 cat data.txt | tr 'A-Za-z' 'N-ZA-Mn-za-m'
@@ -825,63 +825,63 @@ cat data.txt | tr 'A-Za-z' 'N-ZA-Mn-za-m'
 
 ---
 
-## 14. Ringkasan command penting
+## 14. Essential Command Reference
 
-Membaca file biasa:
+Read a regular file:
 
 ```bash
 cat data.txt
 ```
 
-Membaca file bernama `-`:
+Read a file named `-`:
 
 ```bash
 cat ./-
 ```
 
-Membaca file dengan spasi:
+Read a filename containing spaces:
 
 ```bash
 cat "./--spaces in this filename--"
 ```
 
-Melihat hidden file:
+List hidden files:
 
 ```bash
 ls -la
 ```
 
-Mencari file berdasarkan ukuran:
+Find files by size:
 
 ```bash
 find . -type f -size 1033c
 ```
 
-Mencari file di seluruh sistem:
+Search for a file across the system:
 
 ```bash
 find / -type f -user bandit7 -group bandit6 -size 33c 2>/dev/null
 ```
 
-Mencari teks di file:
+Search for text in a file:
 
 ```bash
-grep "kata" data.txt
+grep "word" data.txt
 ```
 
-Mencari baris yang hanya muncul sekali:
+Find lines that occur only once:
 
 ```bash
 sort data.txt | uniq -u
 ```
 
-Mencari string dari file binary:
+Extract strings from a binary file:
 
 ```bash
 strings data.txt
 ```
 
-Decode base64:
+Decode Base64:
 
 ```bash
 base64 -d data.txt
@@ -893,13 +893,13 @@ Decode ROT13:
 cat data.txt | tr 'A-Za-z' 'N-ZA-Mn-za-m'
 ```
 
-Login SSH Bandit:
+Log in to Bandit over SSH:
 
 ```bash
 ssh banditX@bandit.labs.overthewire.org -p 2220
 ```
 
-Ganti `banditX` dengan level yang ingin dimasuki, misalnya `bandit11`.
+Replace `banditX` with the level you want to access, such as `bandit11`.
 
 ---
 

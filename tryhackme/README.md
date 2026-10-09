@@ -1,8 +1,8 @@
 # TryHackMe
 
-5 write-up room dan latihan TryHackMe.
+5 TryHackMe room and training write-ups.
 
-| Write-up | Fokus |
+| Write-up | Focus |
 | --- | --- |
 | [Basic Pentesting](basic-pentesting/README.md) | Enumeration and access |
 | [Neighbour](neighbour/README.md) | IDOR |
@@ -10,4 +10,4 @@
 | [RootMe](rootme/README.md) | File upload and SUID |
 | [TakeOver](takeover/README.md) | Subdomain takeover |
 
-[Kembali ke daftar utama](../README.md).
+[Back to the main index](../README.md).

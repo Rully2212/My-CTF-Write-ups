@@ -4,164 +4,165 @@
 
 ---
 
-# 📌 Overview
-Challenge ini berasal dari platform **TryHackMe** dengan fokus pada **Subdomain Takeover**.  
-Tujuan dari challenge ini adalah melakukan reconnaissance terhadap domain target, menemukan subdomain yang tersedia, dan mengidentifikasi kemungkinan takeover hingga mendapatkan **flag**.
+## 📌 Overview
+This **TryHackMe** challenge focuses on **subdomain takeover**.
+The objective is to perform reconnaissance against the target domain, discover available subdomains, and investigate a potential takeover to obtain the **flag**.
 
 ---
 
-# 🧭 Target Information
+## 🧭 Target Information
 
 | Item | Value |
-|-----|------| Target IP | 10.49.153.93 |
+| --- | --- |
+| Target IP | 10.49.153.93 |
 | Domain | futurevera.thm |
 | Tools | ping, nmap, gobuster |
 | Attack Type | Subdomain Enumeration / Takeover |
 
 ---
 
-# 1️⃣ Connectivity Test
+## 1️⃣ Connectivity Test
 
-Langkah pertama adalah memastikan bahwa target dapat dijangkau dari mesin attacker.
+The first step was to confirm that the target was reachable from the attacker machine.
 
 ```bash
 ping 10.49.153.93
 ```
 
-Jika host merespon ping, maka dapat dipastikan bahwa koneksi ke target sudah berhasil.
+A response to the ping confirms that the target is reachable.
 
 ---
 
-# 2️⃣ Reconnaissance (Port Scanning)
+## 2️⃣ Reconnaissance (Port Scanning)
 
-Selanjutnya dilakukan scanning menggunakan **Nmap** untuk melihat service dan port yang terbuka pada target.
+Next, I used **Nmap** to identify the target's open ports and services.
 
 ```bash
 nmap -sV 10.49.153.93
 ```
 
-Parameter yang digunakan:
+Parameter used:
 
-| Parameter | Fungsi |
+| Parameter | Function |
 |-----------|--------|
-| -sV | mendeteksi versi service yang berjalan pada port |
+| -sV | detects the versions of services running on ports |
 
-Dari proses ini kita bisa mengetahui service apa saja yang aktif pada server.
+This identifies the services active on the server.
 
 ---
 
-# 3️⃣ Domain Discovery
+## 3️⃣ Domain Discovery
 
-Pada deskripsi challenge terdapat domain berikut:
+The challenge description supplied the following domain:
 
 ```
 https://futurevera.thm
 ```
 
-Namun domain ini belum dapat diakses langsung karena belum dikenali oleh sistem lokal.
+The domain could not initially be accessed because the local system could not resolve it.
 
 ---
 
-# 4️⃣ Konfigurasi /etc/hosts
+## 4️⃣ Configuring /etc/hosts
 
-Agar domain bisa diakses, kita perlu menambahkan mapping IP dan domain pada file:
+To access the domain, add an IP-to-hostname mapping to:
 
 ```
 /etc/hosts
 ```
 
-Contoh konfigurasi:
+Example configuration:
 
 ```
 10.49.153.93 futurevera.thm
 ```
 
-Setelah disimpan, domain dapat diakses melalui browser.
+After saving the mapping, the domain can be accessed in the browser.
 
 ---
 
-# 5️⃣ Subdomain Enumeration
+## 5️⃣ Subdomain Enumeration
 
-Setelah domain utama dapat diakses, langkah berikutnya adalah mencari **subdomain** yang mungkin tersedia.
+Once the main domain was accessible, the next step was to discover possible **subdomains**.
 
-Tool yang digunakan adalah **Gobuster**.
+I used **Gobuster** for this step.
 
 ```bash
 gobuster vhost -k -u https://futurevera.thm -w /usr/share/wordlists/dirb/common.txt
 ```
 
-Penjelasan parameter:
+Parameter explanation:
 
-| Parameter | Fungsi |
+| Parameter | Function |
 |----------|--------|
-| vhost | melakukan virtual host enumeration |
-| -k | mengabaikan TLS verification |
+| vhost | performs virtual host enumeration |
+| -k | skips TLS certificate verification |
 | -u | target URL |
-| -w | wordlist yang digunakan |
+| -w | wordlist to use |
 
 ---
 
-# 6️⃣ Hasil Enumeration
+## 6️⃣ Enumeration Results
 
-Dari proses scanning ditemukan beberapa subdomain:
+The scan discovered the following subdomains:
 
 - `support.futurevera.thm`
 - `blog.futurevera.thm`
 
-Subdomain **blog.futurevera.thm** memberikan response:
+The **blog.futurevera.thm** subdomain returned:
 
 ```
 421 Misdirected Request
 ```
 
-Kode HTTP tersebut menunjukkan bahwa request dikirim ke server yang tidak dikonfigurasi untuk merespon domain tersebut.
+This HTTP status indicates that the request was sent to a server unable to respond for the requested domain.
 
 ---
 
-# 7️⃣ Menambahkan Subdomain ke Hosts
+## 7️⃣ Adding Subdomains to the Hosts File
 
-Karena subdomain tidak langsung bisa diakses melalui browser, maka perlu ditambahkan ke file:
+Because the subdomains could not initially be accessed in the browser, add their mappings to:
 
 ```
 /etc/hosts
 ```
 
-Contoh:
+Example:
 
 ```
 10.49.153.93 support.futurevera.thm
 10.49.153.93 blog.futurevera.thm
 ```
 
-Setelah konfigurasi ini, subdomain dapat diakses melalui browser.
+After this configuration, the subdomains can be accessed in the browser.
 
 ---
 
-# 8️⃣ Analisis Certificate
+## 8️⃣ Certificate Analysis
 
-Saat mengakses:
+While accessing:
 
 ```
 support.futurevera.thm
 ```
 
-Saya memeriksa **SSL Certificate** dan menemukan informasi tambahan terkait **DNS yang digunakan oleh domain tersebut**.
+I inspected the **SSL certificate** and found additional information about the **DNS used by the domain**.
 
-Informasi ini menjadi petunjuk penting untuk melanjutkan eksploitasi.
-
----
-
-# 9️⃣ Subdomain Takeover
-
-Setelah menemukan konfigurasi DNS yang digunakan, saya menyesuaikan kembali konfigurasi pada `/etc/hosts`.
-
-Dengan konfigurasi yang tepat, domain akhirnya dapat diakses secara penuh.
-
-Pada tahap ini saya berhasil menemukan **flag** yang menjadi tujuan dari challenge ini.
+This information provided an important clue for continuing the investigation.
 
 ---
 
-# 🏁 Flag
+## 9️⃣ Subdomain Takeover
+
+After identifying the DNS configuration, I updated the mappings in `/etc/hosts`.
+
+With the correct configuration, the domain became fully accessible.
+
+At this stage, I found the **flag** required to complete the challenge.
+
+---
+
+## 🏁 Flag
 
 ```
 FLAG_FOUND_HERE
@@ -169,7 +170,7 @@ FLAG_FOUND_HERE
 
 ---
 
-# 🧰 Tools Used
+## 🧰 Tools Used
 
 - Nmap
 - Gobuster
@@ -178,20 +179,20 @@ FLAG_FOUND_HERE
 
 ---
 
-# 📚 Key Learning
+## 📚 Key Learning
 
-Beberapa hal yang dipelajari dari challenge ini:
+Lessons learned from this challenge:
 
-- Cara melakukan **reconnaissance pada target**
-- Teknik **subdomain enumeration**
-- Memahami **HTTP response code**
-- Analisis **SSL certificate**
-- Konsep **Subdomain Takeover**
+- Performing **target reconnaissance**
+- **Subdomain enumeration** techniques
+- Understanding **HTTP response codes**
+- **SSL certificate** analysis
+- The concept of **subdomain takeover**
 
 ---
 
-# 📖 Conclusion
+## 📖 Conclusion
 
-Challenge ini menunjukkan pentingnya konfigurasi DNS dan subdomain yang benar.  
-Kesalahan konfigurasi pada subdomain dapat membuka peluang bagi attacker untuk melakukan **subdomain takeover**, yang dapat digunakan untuk phishing, hosting malware, atau mengambil alih traffic domain.
+This challenge demonstrates the importance of correct DNS and subdomain configuration.
+Subdomain misconfigurations can enable **subdomain takeover**, which attackers may use for phishing, malware hosting, or redirecting domain traffic.
 

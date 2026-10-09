@@ -62,7 +62,7 @@ The scan identified two open TCP ports:
 
 The HTTP response included headers such as `X-Powered-By: Next.js`, confirming that the service on port 3000 was built with Next.js.
 
-> **Gambar belum tersedia di repo sumber:** Nmap scan showing ports 22 and 3000 (`images/01-nmap-scan.png`).
+> **Image missing from the source repository:** Nmap scan showing ports 22 and 3000 (`images/01-nmap-scan.png`).
 
 ### Key observation
 
@@ -96,7 +96,7 @@ The `check` command reported that the target appeared vulnerable. Running the ex
 node
 ```
 
-> **Gambar belum tersedia di repo sumber:** Initial command shell obtained through the web application (`images/02-initial-rce-shell.png`).
+> **Image missing from the source repository:** Initial command shell obtained through the web application (`images/02-initial-rce-shell.png`).
 
 ### Result
 
@@ -117,7 +117,7 @@ sessions -i 2
 
 Metasploit successfully created a new `meterpreter x86/linux` session while preserving the original command shell.
 
-> **Gambar belum tersedia di repo sumber:** Command shell upgraded to Meterpreter (`images/03-meterpreter-upgrade.png`).
+> **Image missing from the source repository:** Command shell upgraded to Meterpreter (`images/03-meterpreter-upgrade.png`).
 
 This provided more convenient file-system navigation and file-transfer capabilities.
 
@@ -147,7 +147,7 @@ DB_PATH=/opt/reactor-app/reactor.db
 DB_TYPE=sqlite3
 ```
 
-> **Gambar belum tersedia di repo sumber:** Application files and environment configuration (`images/04-application-enumeration.png`).
+> **Image missing from the source repository:** Application files and environment configuration (`images/04-application-enumeration.png`).
 
 Because `sqlite3` is an operating-system command rather than a Meterpreter command, I entered a normal shell before opening the database:
 
@@ -174,7 +174,7 @@ The database returned two users:
 | 1 | admin | `a203b22191d744a4e70ada5c101b17b8` | administrator | `admin@reactor.htb` |
 | 2 | engineer | `39d97110eafe2a9a68639812cd271e8e` | operator | `engineer@reactor.htb` |
 
-> **Gambar belum tersedia di repo sumber:** SQLite users table containing MD5 hashes (`images/05-sqlite-users.png`).
+> **Image missing from the source repository:** SQLite users table containing MD5 hashes (`images/05-sqlite-users.png`).
 
 Both hashes were 32 hexadecimal characters and were tested as raw MD5 hashes with Hashcat mode `0`.
 
@@ -196,7 +196,7 @@ hashcat -m 0 hashes.txt --show
 
 The administrator hash was not found in the standard `rockyou.txt` wordlist; Hashcat completed the entire keyspace with the status `Exhausted`.
 
-> **Gambar belum tersedia di repo sumber:** Hashcat exhausted the wordlist for the administrator hash (`images/06-admin-hash-exhausted.png`).
+> **Image missing from the source repository:** Hashcat exhausted the wordlist for the administrator hash (`images/06-admin-hash-exhausted.png`).
 
 The `engineer` hash was successfully recovered as:
 
@@ -266,7 +266,7 @@ curl http://127.0.0.1:9229/json/list
 
 The response exposed a `webSocketDebuggerUrl`, confirming that the process could be remotely debugged from localhost.
 
-> **Gambar belum tersedia di repo sumber:** Local Node.js Inspector discovered on port 9229 (`images/07-node-inspector-local.png`).
+> **Image missing from the source repository:** Local Node.js Inspector discovered on port 9229 (`images/07-node-inspector-local.png`).
 
 Process enumeration showed that this Node.js service was running as root, making the debugger a direct privilege-escalation opportunity.
 
@@ -291,7 +291,7 @@ ss -ltnp | grep 9229
 curl http://127.0.0.1:9229/json/list
 ```
 
-> **Gambar belum tersedia di repo sumber:** SSH tunnel and Node Inspector endpoint validation (`images/08-ssh-tunnel-validation.png`).
+> **Image missing from the source repository:** SSH tunnel and Node Inspector endpoint validation (`images/08-ssh-tunnel-validation.png`).
 
 Chromium's automatic target discovery did not reliably display the remote process, so I used the Node.js command-line debugger instead.
 
@@ -325,7 +325,7 @@ The result was:
 
 This confirmed that commands evaluated inside the debugger would run as root.
 
-> **Gambar belum tersedia di repo sumber:** Node debugger connected to a process running with UID 0 (`images/09-node-debugger-root-context.png`).
+> **Image missing from the source repository:** Node debugger connected to a process running with UID 0 (`images/09-node-debugger-root-context.png`).
 
 ### Loading `child_process`
 
@@ -355,7 +355,7 @@ process.getBuiltinModule('child_process').execSync('cp /bin/bash /tmp/rootbash &
 
 The empty string returned by `execSync()` indicated that the command completed without producing standard output.
 
-> **Gambar belum tersedia di repo sumber:** Successful command execution in the root-owned Node process (`images/10-root-command-execution.png`).
+> **Image missing from the source repository:** Successful command execution in the root-owned Node process (`images/10-root-command-execution.png`).
 
 From the normal `engineer` SSH session, I verified the file permissions:
 

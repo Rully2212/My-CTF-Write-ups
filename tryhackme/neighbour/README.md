@@ -1,31 +1,37 @@
-# Laporan Writeup: TryHackme Neighbour CTF (IDOR)
-**Penulis:** Rully Miftahur Rozaq
+# TryHackMe Neighbour CTF Write-up (IDOR)
 
-## Pendahuluan
-Laporan ini menjelaskan langkah-langkah penyelesaian tantangan Neighbour CTF di platform TryHackMe yang berfokus pada eksploitasi kerentanan IDOR (Insecure Direct Object Reference). IDOR adalah celah keamanan di mana pengguna dapat memanipulasi parameter ID untuk mengakses data milik pengguna lain.
+**Author:** Rully Miftahur Rozaq
 
----
+## Introduction
 
-## Langkah-Langkah Penyelesaian
-
-### 1. Persiapan dan Akses Target
-* Langkah pertama adalah menyalakan mesin di TryHackMe untuk mendapatkan alamat IP target.
-* Mengakses IP yang tersedia. Dalam kasus ini, IP target adalah `10.48.173.31`, yang menampilkan halaman formulir login.
-
-### 2. Mendapatkan Kredensial Guest
-* Karena belum memiliki akun, pengecekan dilakukan pada kode sumber halaman dengan menekan tombol CTRL + U pada keyboard.
-* Ditemukan informasi akun guest pada source code, kemudian login dilakukan menggunakan username `guest` dan password `guest`.
-
-### 3. Eksploitasi IDOR
-* Setelah login sebagai guest, website menampilkan pesan peringatan untuk tidak mengintip profil pengguna lain.
-* Pengujian IDOR dilakukan dengan mengganti parameter user pada URL dari `guest` menjadi `admin`.
-  * **URL Awal:** `http://10.48.173.31/profile.php?user=guest`
-  * **URL Modifikasi:** `http://10.48.173.31/profile.php?user=admin`
+This report documents the steps used to solve the Neighbour CTF challenge on TryHackMe, which focuses on exploiting IDOR (Insecure Direct Object Reference). IDOR is a vulnerability that allows a user to manipulate an identifier to access another user's data.
 
 ---
 
-## Hasil Akhir
-Setelah berhasil mengubah parameter ID menjadi `admin`, sistem mengarahkan ke halaman profil admin dan menampilkan flag yang dicari.
+## Walkthrough
+
+### 1. Preparing and Accessing the Target
+
+* First, start the TryHackMe machine to obtain the target IP address.
+* Open the supplied IP address. In this case, the target at `10.48.173.31` displayed a login form.
+
+### 2. Finding Guest Credentials
+
+* With no account available, inspect the page source by pressing CTRL + U.
+* The source code exposed guest account credentials. Log in using the username `guest` and password `guest`.
+
+### 3. Exploiting IDOR
+
+* After logging in as the guest, the website displayed a warning against viewing other users' profiles.
+* Test for IDOR by changing the URL's user parameter from `guest` to `admin`.
+  * **Original URL:** `http://10.48.173.31/profile.php?user=guest`
+  * **Modified URL:** `http://10.48.173.31/profile.php?user=admin`
+
+---
+
+## Final Result
+
+Changing the user parameter to `admin` opened the administrator's profile and revealed the required flag.
 
 **Flag:**
 > `flag{66be95c478473d91a5358f2440c7af1f}`
