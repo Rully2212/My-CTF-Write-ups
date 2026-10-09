@@ -57,6 +57,8 @@ The relevant options were:
 - `-T5` — uses very aggressive timing, which is acceptable in this controlled lab but may reduce reliability on unstable networks.
 - `-v` — displays verbose progress information.
 
+![Nmap scan in progress](images/01-nmap-scan.png)
+
 *Figure 1 — Initial Nmap service and version scan against the target.*
 
 The completed scan identified three open TCP ports:
@@ -68,6 +70,8 @@ The completed scan identified three open TCP ports:
 | 80/tcp | HTTP | lighttpd 1.4.35 |
 
 Ports 1065, 4899, and 5033 appeared as filtered. The open web service and the Raspberry Pi-oriented service combination justified further HTTP enumeration.
+
+![Completed Nmap results](images/02-nmap-results.png)
 
 *Figure 2 — Nmap results showing SSH, DNS, and HTTP services.*
 
@@ -88,6 +92,8 @@ Gobuster returned the following useful results:
 ```
 
 The `/admin/` redirect identified the administration path used by the Pi-hole interface. Although the web service was useful for identifying the target, the subsequent SSH banner exposed a simpler initial-access path.
+
+![Gobuster directory enumeration](images/03-gobuster-enumeration.png)
 
 *Figure 3 — Gobuster discovered the `/admin/` path and `swfobject.js`.*
 
@@ -118,6 +124,8 @@ ls -la
 ```
 
 The resulting prompt and `/home/pi` path confirmed interactive access as the `pi` user.
+
+![Successful SSH access as pi](images/04-ssh-foothold.png)
 
 *Figure 4 — SSH access obtained as `pi`; the login banner confirms the unchanged default password.*
 
@@ -157,6 +165,8 @@ sudo su
 
 The prompt changed from `pi@raspberrypi` to `root@raspberrypi`, confirming successful privilege escalation.
 
+![User flag and passwordless sudo permission](images/05-user-flag-sudo.png)
+
 *Figure 5 — User flag discovery, unrestricted passwordless sudo access, and the resulting root shell.*
 
 ## 8. Root Flag Investigation
@@ -178,6 +188,8 @@ I lost my original root.txt! I think I may have a backup on my USB stick...
 ```
 
 This indicated that the actual root flag was associated with removable storage. A brief inspection of `.ssh` and `.bash_history` did not produce the flag, so the next step was to enumerate mounted block devices.
+
+![Root flag hint](images/06-root-hint.png)
 
 *Figure 6 — `root.txt` states that the original flag may have been backed up to a USB stick.*
 
@@ -211,6 +223,8 @@ Do you know if there is any way to get them back?
 -James
 ```
 
+![USB enumeration and deletion note](images/07-usb-enumeration.png)
+
 *Figure 7 — `/dev/sdb` is mounted at `/media/usbstick`; `damnit.txt` confirms that files were deleted.*
 
 ### 8.3 Recovering the Deleted Root Flag
@@ -222,6 +236,8 @@ strings /dev/sdb
 ```
 
 The output contained a 32-character hexadecimal value associated with the deleted `root.txt`. This recovered value was accepted as the root flag. The exact flag is omitted from the report text.
+
+![Root flag recovered from the raw USB device](images/08-root-flag-recovery.png)
 
 *Figure 8 — The deleted root flag was recovered by extracting printable strings from `/dev/sdb`.*
 
@@ -308,3 +324,13 @@ The Mirai machine was compromised through a chain of insecure configuration choi
 The decisive observations were the SSH warning about unchanged default credentials, the `NOPASSWD: ALL` sudo rule, and the clue referring to a USB backup. Together, these findings demonstrate how default credentials, excessive privileges, and improper data deletion can lead to full system compromise.
 
 ---
+
+## Completeness Check
+
+- [x] Chronological reconnaissance, initial access, and privilege escalation
+- [x] Commands and relevant options explained
+- [x] Screenshot evidence placed beside the supported step
+- [x] Failed path attempts and corrections documented
+- [x] User and root access verified
+- [x] Security impact and mitigations included
+- [x] Conclusion supported by the recorded evidence
