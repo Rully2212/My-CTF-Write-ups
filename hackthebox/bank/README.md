@@ -186,3 +186,60 @@ The following recommendations address the weaknesses illustrated by the captured
 | Platform completion | The background Hack The Box page in E02–E03 displays that Bank was solved. |
 
 The evidence supports a successful progression to effective root access. The principal lessons are to protect generated account data, isolate uploaded content from code execution, and apply least privilege to local executables. It also demonstrates the value of verifying identity explicitly: a shell prompt by itself is weaker evidence than the effective user ID.
+
+## Appendix A. Screenshot Register
+
+Times below are taken from the supplied screenshot filenames. The reproduced images retain their original content, including information visible in the source evidence.
+
+| Evidence | Capture time | Subject |
+| --- | --- | --- |
+| E01 | 02:30:00 | Nmap results, hosts-file editor invocation, and initial Gobuster scan |
+| E02 | 02:39:07 | Initial enumeration results and start of the larger scan |
+| E03 | 02:41:42 | Completed larger scan identifying the account-report directory |
+| E04 | 02:42:06 | Account-report directory index sorted by size |
+| E05 | 02:42:15 | Readable account report and encryption failure message |
+| E06 | 02:42:25 | Authenticated support page and attachment-bearing ticket |
+| E07 | 02:42:36 | Target connection and confirmed `www-data` shell |
+| E08 | 02:43:26 | Local directory inspection and user flag file listing |
+| E09 | 02:43:47 | SUID file discovery and initial privilege checks |
+| E10 | 02:45:48 | Effective root identity and root flag read command |
+
+### E01 — Service Discovery
+
+![E01: Captured service discovery and start of web enumeration](images/01-service-discovery.png)
+
+### E02 — Initial Web Enumeration
+
+![E02: Initial web enumeration results and expanded scan](images/02-initial-web-enumeration.png)
+
+### E03 — Extended Web Enumeration
+
+![E03: Additional account-report directory identified](images/03-extended-web-enumeration.png)
+
+### E04 — Directory Listing
+
+![E04: Account reports displayed in a directory index](images/04-directory-listing.png)
+
+### E05 — Exposed Account Report
+
+![E05: Account information exposed in a readable report](images/05-exposed-account-report.png)
+
+### E06 — Authenticated Support Page
+
+![E06: Authenticated support page with a ticket attachment](images/06-authenticated-support-page.png)
+
+### E07 — Web Service Shell
+
+![E07: Connection from the target and shell identity](images/07-web-service-shell.png)
+
+### E08 — User Flag Location
+
+![E08: Home directory listing containing the user flag file](images/08-user-flag-location.png)
+
+### E09 — Privileged File Enumeration
+
+![E09: SUID executable metadata and initial identity checks](images/09-privileged-file-enumeration.png)
+
+### E10 — Effective Root Confirmation
+
+![E10: Effective root identity and attempted root flag read](images/10-effective-root-confirmation.png)
