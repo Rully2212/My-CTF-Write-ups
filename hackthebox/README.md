@@ -1,6 +1,6 @@
 # Hack The Box
 
-17 Hack The Box machine write-ups.
+18 Hack The Box machine write-ups.
 
 | Write-up | Focus |
 | --- | --- |
@@ -8,6 +8,7 @@
 | [Bank](bank/README.md) | Exposed account data, file upload, SUID |
 | [Blocky](blocky/README.md) | Java plugin credentials, password reuse, sudo |
 | [Blue](blue/README.md) | SMB, MS17-010 / EternalBlue |
+| [Bounty](bounty/README.md) | IIS configuration upload, Classic ASP, JuicyPotato |
 | [Cap](cap/README.md) | IDOR, packet captures, Linux capabilities |
 | [Devel](devel/README.md) | Anonymous FTP, IIS, Windows privilege escalation |
 | [Grandpa](grandpa/README.md) | IIS WebDAV, Windows privilege escalation |

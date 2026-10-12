@@ -2,7 +2,7 @@
 
 A collection of Capture The Flag write-ups and security training notes by **Rully Miftahur Rozaq**, organized by platform and machine. Each write-up documents the approach, observations, and available evidence from the lab session.
 
-**23 write-ups:** 17 Hack The Box · 5 TryHackMe · 1 OverTheWire.
+**24 write-ups:** 18 Hack The Box · 5 TryHackMe · 1 OverTheWire.
 
 ## Hack The Box
 
@@ -12,6 +12,7 @@ A collection of Capture The Flag write-ups and security training notes by **Rull
 | [Bank](hackthebox/bank/README.md) | Exposed account data, file upload, SUID |
 | [Blocky](hackthebox/blocky/README.md) | Java plugin credentials, password reuse, sudo |
 | [Blue](hackthebox/blue/README.md) | SMB, MS17-010 / EternalBlue |
+| [Bounty](hackthebox/bounty/README.md) | IIS configuration upload, Classic ASP, JuicyPotato |
 | [Cap](hackthebox/cap/README.md) | IDOR, packet captures, Linux capabilities |
 | [Devel](hackthebox/devel/README.md) | Anonymous FTP, IIS, Windows privilege escalation |
 | [Grandpa](hackthebox/grandpa/README.md) | IIS WebDAV, Windows privilege escalation |
