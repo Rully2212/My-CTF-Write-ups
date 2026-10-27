@@ -9,6 +9,7 @@ A collection of Capture The Flag write-ups and security training notes by **Rull
 | Write-up | Focus |
 | --- | --- |
 | [Arctic](hackthebox/arctic/README.md) | ColdFusion, Windows privilege escalation |
+| [Active](hackthebox/HTB-Active-Writeup/README.md) | Active Directory, SMB, Netexec, LDAP, Kerberos, Impacket Psexec |
 | [Bank](hackthebox/bank/README.md) | Exposed account data, file upload, SUID |
 | [Blocky](hackthebox/blocky/README.md) | Java plugin credentials, password reuse, sudo |
 | [Blue](hackthebox/blue/README.md) | SMB, MS17-010 / EternalBlue |
