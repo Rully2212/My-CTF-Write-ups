@@ -22,7 +22,7 @@ A collection of Capture The Flag write-ups and security training notes by **Rull
 | [Mirai](hackthebox/mirai/README.md) | Default credentials, sudo, deleted-file recovery |
 | [Nexus](hackthebox/nexus/README.md) | Exposed configuration, file upload, Git path traversal |
 | [Optimum](hackthebox/optimum/README.md) | HTTP File Server, Windows privilege escalation |
-| [Netmon](hackthebox/Netmon-CTF-Writeup/Netmon-CTF-Writeup.md) |
+| [Netmon](hackthebox/Netmon-CTF-Writeup/Netmon-CTF-Writeup.md) | Anonymous FTP, Metasploit Privilege escalation
 | [Orion](hackthebox/orion/README.md) | Craft CMS, password cracking, Telnet |
 | [Reactor](hackthebox/reactor/README.md) | Next.js, SQLite credentials, Node.js Inspector |
 | [Unified](hackthebox/unified/README.md) | UniFi, Log4j, MongoDB |
