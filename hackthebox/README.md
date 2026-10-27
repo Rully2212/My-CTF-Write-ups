@@ -22,5 +22,6 @@
 | [Reactor](reactor/README.md) | Next.js, SQLite credentials, Node.js Inspector |
 | [Unified](unified/README.md) | UniFi, Log4j, MongoDB |
 | [Valentine](valentine/README.md) | Heartbleed, SSH, tmux |
+| [Netmon](hackthebox/Netmon-CTF-Writeup/Netmon-CTF-Writeup.md) | Anonymous FTP, Metasploit Privilege escalation
 
 [Back to the main index](../README.md).
