@@ -25,6 +25,7 @@ A collection of Capture The Flag write-ups and security training notes by **Rull
 | [Optimum](hackthebox/optimum/README.md) | HTTP File Server, Windows privilege escalation |
 | [Netmon](hackthebox/Netmon-CTF-Writeup/Netmon-CTF-Writeup.md) | Anonymous FTP, Metasploit Privilege escalation
 | [Orion](hackthebox/orion/README.md) | Craft CMS, password cracking, Telnet |
+| [Popcorn](hackthebox/HTB-Popcorn-Writeup/README.md) | SQL Injection, Burpsuite, File Upload vulnerability, Ubuntu PAM Privilege Escalation |
 | [Reactor](hackthebox/reactor/README.md) | Next.js, SQLite credentials, Node.js Inspector |
 | [Unified](hackthebox/unified/README.md) | UniFi, Log4j, MongoDB |
 | [Valentine](hackthebox/valentine/README.md) | Heartbleed, SSH, tmux |
